@@ -1,0 +1,12 @@
+Ideas           //recursividad, queue, stack, abb, ordenamientos, heap, 
+
+Hash table para guardar las palabras que se pueden usar
+
+Lista enlazada para guardar las letras en la cuadricula
+
+Meter las palabras creadas a un queue
+
+Heap para odernar las palabras de mayor valor a menor
+
+Abb para elegir los puntos de cada palabra (o un grafo)
+
