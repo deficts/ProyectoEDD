@@ -16,10 +16,12 @@ public class Hec{
 		llenado();
 	}
 	
+	public Node<Letra> getEsquina() {
+		return this.esquina;
+	}
 	
 	private void mapeo() {
-//		int iteracion=0;
-		this.esquina=this.tablero[7][7];
+		this.esquina=this.tablero[0][7];
 		for (int i = 0; i < tablero.length; i++) {
 			for (int j = 0; j < tablero[i].length; j++) {
 				if(i>0 && i<7 && j>0 && j<7) {
@@ -31,7 +33,6 @@ public class Hec{
 					this.tablero[i][j].upright=this.tablero[i+1][j-1];
 					this.tablero[i][j].downleft=this.tablero[i-1][j+1];
 					this.tablero[i][j].downright=this.tablero[i+1][j+1];
-//					System.out.println("check enmedio");
 				}
 				else {
 					if(i==0) {
@@ -55,7 +56,6 @@ public class Hec{
 							this.tablero[i][j].up=this.tablero[i][j-1];
 							this.tablero[i][j].upright=this.tablero[i+1][j-1];
 						}
-//						System.out.println("check izquierda");
 						
 					}
 					else if(i==7) {
@@ -79,7 +79,6 @@ public class Hec{
 							this.tablero[i][j].down=this.tablero[i][j+1];
 							this.tablero[i][j].downleft=this.tablero[i-1][j+1];
 						}
-//						System.out.println("check derecha");
 					}
 					else if(j==0 && i>0 && i<7) {
 						this.tablero[i][j].up=null;
@@ -90,7 +89,6 @@ public class Hec{
 						this.tablero[i][j].down=this.tablero[i][j+1];
 						this.tablero[i][j].downright=this.tablero[i+1][j+1];
 						this.tablero[i][j].downleft=this.tablero[i-1][j+1];
-//						System.out.println("check arriba");
 					}
 					else if(j==7 && i>0 && i<7) {
 						this.tablero[i][j].down=null;
@@ -101,22 +99,20 @@ public class Hec{
 						this.tablero[i][j].upleft=this.tablero[i-1][j-1];
 						this.tablero[i][j].left=this.tablero[i-1][j];
 						this.tablero[i][j].right=this.tablero[i+1][j];
-//						System.out.println("check abajo");
 					}
 				}
-//				System.out.println("iteracion: "+iteracion++);
 			}
 		}
 		
 	}
 	
 	public void llenado(){
-		int x=130;
-		int y=200;
+		int x=90;
+		int y=150;
 		int contador=0;
 		for (int i = 0; i < this.tablero.length; i++) {
 			for (int j = 0; j < this.tablero[i].length; j++) {
-				if(contador==3) {
+				if(contador==2) {
 					this.tablero[i][j]=new Node <Letra> (new Letra(getVocal(), x,y));					
 					contador=0;
 				}
@@ -124,10 +120,10 @@ public class Hec{
 					this.tablero[i][j]=new Node <Letra> (new Letra(getConsonante(), x,y));
 					contador++;
 				}
-				x+=42;
+				x+=55;
 			}
-			y+=42;
-			x=130;
+			y+=55;
+			x=90;
 		}
 		
 		mapeo();

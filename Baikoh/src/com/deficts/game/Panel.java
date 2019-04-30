@@ -6,14 +6,17 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.rmi.dgc.DGC;
 import java.util.Random;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-public class Panel extends JPanel{
+public class Panel extends JPanel implements Runnable, MouseListener{
 	
-	private Letra[][] tablero= new Letra[8][8]; // Letra[fila][columna]
+	private Letra[][] tablerosss= new Letra[8][8]; // Letra[fila][columna]
 	private int state;
 	
 	private JButton btnStart,
@@ -23,14 +26,164 @@ public class Panel extends JPanel{
 	
 	private Hec hec;
 	
+	private boolean start;
+	
+	private Random ran=new Random();
+	
+	private int c0,c1,c2,c3,c4,c5,c6,c7;
+	
+	private Thread hilo;
+	
 	public Panel() {
 		super();
 		this.setPreferredSize(new Dimension(600,810));
 		this.setBackground(Color.darkGray.darker());
 		this.setLayout(null);
 		this.state=1;
+		this.addMouseListener(this);
+		this.start=false;
 		this.hec=new Hec();
+		this.hilo=new Thread(this);
+		this.c0=this.c1=this.c2=this.c3=this.c4=this.c5=this.c6=this.c7=4;
+		crearBotones();
 		
+	}
+	
+	public void run() {
+		try {
+			if(this.start) {
+				while(true) {
+					int num=5;//ran.nextInt(8);
+					System.out.println(num);
+					this.repaint();
+						
+					if(num==0) {			
+						if(this.c0>=0) {
+							this.hec.tablero[c0--][0].getData().draw(this.getGraphics());
+						}
+						else {
+							this.state=3;
+							break;
+						}
+					}
+					else if(num==1) {
+						if(this.c1>=0) {
+							this.hec.tablero[c1--][1].getData().draw(this.getGraphics());
+						}
+						else {
+							this.state=3;
+							break;
+						}
+					}
+					else if(num==2) {
+						if(this.c2>=0) {
+							this.hec.tablero[c2--][2].getData().draw(this.getGraphics());
+						}
+						else {
+							this.state=3;
+							break;
+						}
+					}
+					else if(num==3) {
+						if(this.c3>=0) {
+							this.hec.tablero[c3--][3].getData().draw(this.getGraphics());
+						}
+						else {
+							this.state=3;
+							break;
+						}
+					}
+					else if(num==4) {
+						if(this.c4>=0) {
+							this.hec.tablero[c4--][4].getData().draw(this.getGraphics());
+						}
+						else {
+							this.state=3;
+							break;
+						}
+					}
+					else if(num==5) {
+						if(c5>=0) {
+							this.hec.tablero[c5--][5].getData().draw(this.getGraphics());
+						}
+						else {
+							this.state=3;
+							break;
+						}
+					}
+					else if(num==6) {
+						if(this.c6>=0) {
+							this.hec.tablero[c6--][6].getData().draw(this.getGraphics());
+						}
+						else {
+							this.state=3;
+							break;
+						}
+					}
+					else if(num==7) {
+						if(this.c7>=0) {
+							this.hec.tablero[c7--][7].getData().draw(this.getGraphics());
+						}
+						else {
+							this.state=3;
+							break;
+						}
+					}
+					Thread.sleep(3000);
+				}
+			}
+			
+			
+		} catch (InterruptedException e) {
+			System.out.println("Error en sleep "+e);
+		}
+	}
+	
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		
+		if(this.state==0) {
+			this.btnStart.setVisible(true);
+			this.btnOptions.setVisible(true);
+			this.btnExit.setVisible(true);
+			this.btnBack.setVisible(false);
+			
+		}
+		else if(this.state==1) {
+			this.btnStart.setVisible(false);
+			this.btnOptions.setVisible(false);
+			this.btnExit.setVisible(false);
+			this.btnBack.setVisible(true);
+			
+			pintaCuadricula(g);
+			llenadoInicial(g);
+			
+			
+		}
+		else if(this.state==2) {
+			this.btnStart.setVisible(false);
+			this.btnOptions.setVisible(false);
+			this.btnExit.setVisible(false);
+			this.btnBack.setVisible(true);
+			pintaReglas(g);
+			
+		}
+		else if(this.state==3) {
+			this.btnStart.setVisible(false);
+			this.btnOptions.setVisible(false);
+			this.btnExit.setVisible(false);
+			g.setFont(new Font("Helvetica", Font.BOLD, 70));
+			g.setColor(Color.white);
+			g.drawString("End of", 180, 350);
+			g.drawString("the game!!", 120, 450);
+			this.btnBack.setVisible(true);
+			this.c0=this.c1=this.c2=this.c3=this.c4=this.c5=this.c6=this.c7=4;
+			this.hec=new Hec();
+			
+		}
+	}
+	
+	private void crearBotones() {
 		this.btnStart = new JButton("START");
 		this.btnStart.setFont(new Font("Arial",Font.PLAIN,55));
 		this.btnStart.setForeground(Color.white);
@@ -86,41 +239,7 @@ public class Panel extends JPanel{
 					repaint();
 			}
 		});
-		
 	}
-	
-
-	
-	public void Start() {
-		
-	}
-	
-	public void Update() {
-		
-	}
-	
-	private void llenadoInicial(Graphics g) {
-		for (int i = 5; i < this.hec.tablero.length; i++) {
-			for (int j = 0; j < this.hec.tablero[i].length; j++) {
-				this.hec.pinta(i,j,g);
-			}
-		}
-	}
-	
-	private void pintaCuadricula(Graphics g) {
-		int x=130;
-		int y=200;
-		g.setColor(Color.white);
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				g.drawRect(x, y, 40, 40);
-				x+=42;
-			}
-			y+=42;
-			x=130;
-		}
-	}
-	
 	private void pintaReglas(Graphics g) {
 		g.setColor(Color.WHITE);
 		g.setFont(new Font("Helvetica", Font.BOLD, 30));
@@ -144,36 +263,59 @@ public class Panel extends JPanel{
 		r.draw(g);
 		
 	}
-	
-	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
+	private void pintaCuadricula(Graphics g) {
+		int x=90;
+		int y=150;
+		g.setColor(Color.white);
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				g.drawRect(x, y, 40, 40);
+				x+=55;
+			}
+			y+=55;
+			x=90;
+		}
 		
-		if(this.state==0) {
-			this.btnStart.setVisible(true);
-			this.btnOptions.setVisible(true);
-			this.btnExit.setVisible(true);
-			this.btnBack.setVisible(false);
-			
+		x=46;
+		y=662;
+		for (int i = 0; i < 12; i++) {
+			g.drawRect(x, y, 40, 40);
+			x+=42;
 		}
-		else if(this.state==1) {
-			this.btnStart.setVisible(false);
-			this.btnOptions.setVisible(false);
-			this.btnExit.setVisible(false);
-			this.btnBack.setVisible(true);
-			
-			pintaCuadricula(g);
-			llenadoInicial(g);
-			
-			
+		
+	}
+	private void llenadoInicial(Graphics g) {
+		for (int i = 5; i < this.hec.tablero.length; i++) {
+			for (int j = 0; j < this.hec.tablero[i].length; j++) {
+				this.hec.pinta(i,j,g);
+			}
 		}
-		else if(this.state==2) {
-			this.btnStart.setVisible(false);
-			this.btnOptions.setVisible(false);
-			this.btnExit.setVisible(false);
-			this.btnBack.setVisible(true);
-			pintaReglas(g);
-			
-		}
+	}
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		this.start=true;
+		run();
+		
+	}
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }
