@@ -12,40 +12,24 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 public class Panel extends JPanel{
-	private final String [] consonantes = {"B","C","D","F","G","H","J","K","L","M","N","P","Q","R","S","T","V","X","Y","Z"};
-	private final String [] vocales = {"A","E","I","O","U"};
-	private Letra[][] tablero= new Letra[8][8];
+	
+	private Letra[][] tablero= new Letra[8][8]; // Letra[fila][columna]
 	private int state;
+	
 	private JButton btnStart,
 					btnOptions,
 					btnExit,
 					btnBack;
-	Random ran=new Random();
+	
+	private Hec hec;
 	
 	public Panel() {
 		super();
 		this.setPreferredSize(new Dimension(600,810));
 		this.setBackground(Color.darkGray.darker());
 		this.setLayout(null);
-		this.state=0;
-		int x=130;
-		int y=200;
-		int contador=0;
-		for (int i = 0; i < tablero.length; i++) {
-			for (int j = 0; j < tablero[i].length; j++) {
-				if(contador==3) {
-					tablero[i][j]=new Letra(getConsonante(),x,y);
-					contador=0;
-				}
-				else {
-					tablero[i][j]=new Letra(getVocal(),x,y);
-					contador++;
-				}
-				x+=42;
-			}
-			y+=42;
-			x=130;
-		}
+		this.state=1;
+		this.hec=new Hec();
 		
 		this.btnStart = new JButton("START");
 		this.btnStart.setFont(new Font("Arial",Font.PLAIN,55));
@@ -105,13 +89,7 @@ public class Panel extends JPanel{
 		
 	}
 	
-	private String getVocal() {
-		return vocales[ran.nextInt(5)];
-	}
-	
-	private String getConsonante() {
-		return consonantes[ran.nextInt(20)];
-	}
+
 	
 	public void Start() {
 		
@@ -122,9 +100,9 @@ public class Panel extends JPanel{
 	}
 	
 	private void llenadoInicial(Graphics g) {
-		for (int i = 5; i < tablero.length; i++) {
-			for (int j = 0; j < tablero[i].length; j++) {
-				tablero[i][j].draw(g);
+		for (int i = 5; i < this.hec.tablero.length; i++) {
+			for (int j = 0; j < this.hec.tablero[i].length; j++) {
+				this.hec.pinta(i,j,g);
 			}
 		}
 	}
@@ -133,8 +111,8 @@ public class Panel extends JPanel{
 		int x=130;
 		int y=200;
 		g.setColor(Color.white);
-		for (int i = 0; i < tablero.length; i++) {
-			for (int j = 0; j < tablero[i].length; j++) {
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
 				g.drawRect(x, y, 40, 40);
 				x+=42;
 			}
@@ -185,6 +163,7 @@ public class Panel extends JPanel{
 			
 			pintaCuadricula(g);
 			llenadoInicial(g);
+			
 			
 		}
 		else if(this.state==2) {

@@ -56,4 +56,8 @@ public class Letra {
 		g.drawString(this.letra, this.x+10, this.y+30);
 	}
 	
+	public String toString() {
+		return this.letra;
+	}
+	
 }
