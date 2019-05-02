@@ -4,20 +4,35 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Polygon;
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.font.ShapeGraphicAttribute;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
+import java.io.IOException;
 import java.rmi.dgc.DGC;
+import java.security.Key;
 import java.util.Random;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-public class Panel extends JPanel implements Runnable, MouseListener{
+public class Panel extends JPanel implements KeyListener,Runnable, MouseListener, MouseMotionListener{
 	
-	private Letra[][] tablerosss= new Letra[8][8]; // Letra[fila][columna]
+	//private Letra[][] tablero= new Letra[8][8]; // Letra[fila][columna]
 	private int state;
+	
+	private Diccionario d = new Diccionario();
 	
 	private JButton btnStart,
 					btnOptions,
@@ -26,7 +41,7 @@ public class Panel extends JPanel implements Runnable, MouseListener{
 	
 	private Hec hec;
 	
-	private boolean start;
+	private boolean start, isBuilding;
 	
 	private Random ran=new Random();
 	
@@ -34,26 +49,37 @@ public class Panel extends JPanel implements Runnable, MouseListener{
 	
 	private Thread hilo;
 	
+	private Node<Letra> pointer;
+	
+	private String s="";
+	
+	private Point cover;
+	
+	private int direction= 0;
+	
 	public Panel() {
 		super();
 		this.setPreferredSize(new Dimension(600,810));
 		this.setBackground(Color.darkGray.darker());
 		this.setLayout(null);
 		this.state=1;
+		this.addKeyListener(this);
 		this.addMouseListener(this);
+		this.addMouseMotionListener(this);
 		this.start=false;
 		this.hec=new Hec();
 		this.hilo=new Thread(this);
 		this.c0=this.c1=this.c2=this.c3=this.c4=this.c5=this.c6=this.c7=4;
 		crearBotones();
-		
+		pointer=hec.getEsquina();
+		cover = new Point(pointer.getData().getX(), pointer.getData().getY());
 	}
 	
 	public void run() {
 		try {
 			if(this.start) {
 				while(true) {
-					int num=5;//ran.nextInt(8);
+					int num=ran.nextInt(8);
 					System.out.println(num);
 					this.repaint();
 						
@@ -154,11 +180,11 @@ public class Panel extends JPanel implements Runnable, MouseListener{
 			this.btnOptions.setVisible(false);
 			this.btnExit.setVisible(false);
 			this.btnBack.setVisible(true);
-			
 			pintaCuadricula(g);
 			llenadoInicial(g);
-			
-			
+			this.requestFocusInWindow();
+			g.setColor(Color.red);
+			pintaFlecha(g, new Point(cover.x, cover.y));
 		}
 		else if(this.state==2) {
 			this.btnStart.setVisible(false);
@@ -179,7 +205,6 @@ public class Panel extends JPanel implements Runnable, MouseListener{
 			this.btnBack.setVisible(true);
 			this.c0=this.c1=this.c2=this.c3=this.c4=this.c5=this.c6=this.c7=4;
 			this.hec=new Hec();
-			
 		}
 	}
 	
@@ -274,8 +299,7 @@ public class Panel extends JPanel implements Runnable, MouseListener{
 			}
 			y+=55;
 			x=90;
-		}
-		
+		}	
 		x=46;
 		y=662;
 		for (int i = 0; i < 12; i++) {
@@ -285,17 +309,62 @@ public class Panel extends JPanel implements Runnable, MouseListener{
 		
 	}
 	private void llenadoInicial(Graphics g) {
-		for (int i = 5; i < this.hec.tablero.length; i++) {
+		for (int i = 0; i < this.hec.tablero.length; i++) {
 			for (int j = 0; j < this.hec.tablero[i].length; j++) {
 				this.hec.pinta(i,j,g);
 			}
 		}
 	}
+	
+	private void pintaFlecha(Graphics g, Point p) {
+		switch(direction) {
+			case 0:
+				g.drawLine(p.x+10, p.y, p.x+20, p.y-10); //izquierda
+				g.drawLine(p.x+10, p.y, p.x+30, p.y); //abajo
+				g.drawLine(p.x+30, p.y, p.x+20, p.y-10); //derecha
+				break;
+			case 1:
+				g.drawLine(p.x+40, p.y, p.x+40, p.y+10); //derecha
+				g.drawLine(p.x+30, p.y, p.x+40, p.y); //arriba
+				g.drawLine(p.x+30, p.y, p.x+40, p.y+10); //abajo
+				break;
+			case 2:
+				g.drawLine(p.x+40, p.y+10, p.x+40, p.y+30); //izquierda
+				g.drawLine(p.x+40, p.y+10, p.x+50, p.y+20); //arriba
+				g.drawLine(p.x+50, p.y+20, p.x+40, p.y+30); //abajo
+				break;
+			case 3:
+				g.drawLine(p.x+40, p.y+30, p.x+40, p.y+40); //derecha
+				g.drawLine(p.x+40, p.y+30, p.x+30, p.y+40); //izquierda
+				g.drawLine(p.x+40, p.y+40, p.x+30, p.y+40); //abajo
+				break;
+			case 4:
+				g.drawLine(p.x+10, p.y+40, p.x+20, p.y+50); //derecha
+				g.drawLine(p.x+10, p.y+40, p.x+30, p.y+40); //arriba
+				g.drawLine(p.x+30, p.y+40, p.x+20, p.y+50); //izquierda
+				break;
+			case 5:
+				g.drawLine(p.x+10, p.y+40, p.x, p.y+40); //abajo
+				g.drawLine(p.x, p.y+40, p.x, p.y+30); //izquierda
+				g.drawLine(p.x, p.y+30, p.x+10, p.y+40); //arriba
+				break;
+			case 6:
+				g.drawLine(p.x, p.y+10, p.x, p.y+30); //derecha
+				g.drawLine(p.x, p.y+30, p.x-10, p.y+20); //abajo
+				g.drawLine(p.x, p.y+10, p.x-10, p.y+20); //arriba
+				break;
+			case 7:
+				g.drawLine(p.x, p.y, p.x+10, p.y); //arriba
+				g.drawLine(p.x, p.y, p.x, p.y+10); //izquierda
+				g.drawLine(p.x, p.y+10, p.x+10, p.y); //arriba
+				break;
+		}
+	}
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		this.start=true;
-		run();
-		
+		//this.start=true;
+		//run();
+		//System.out.println(d.diccionario.containsKey("achilles".hashCode()));
 	}
 	@Override
 	public void mousePressed(MouseEvent e) {
@@ -309,7 +378,7 @@ public class Panel extends JPanel implements Runnable, MouseListener{
 	}
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
@@ -317,6 +386,127 @@ public class Panel extends JPanel implements Runnable, MouseListener{
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+
+	}
 	
+	public boolean mouseBounds(int mx, int my) {
+		if(mx>=90 && mx<=530 && my>=150 && my<=590) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	@Override
+	public void keyPressed(KeyEvent k) {
+		// TODO Auto-generated method stub
+		if(this.state == 1) {
+			if(k.getKeyCode() == KeyEvent.VK_SPACE) {
+				if(isBuilding) {
+					this.isBuilding=false;
+					if(d.diccionario.containsKey(s.toLowerCase().hashCode())) {
+						System.out.println(true);
+					}else {
+						System.out.println(false);
+					}
+					s="";
+				}else {
+					this.isBuilding = true;
+					s+=pointer.toString();
+				}	
+			}
+			if(k.getKeyCode() == KeyEvent.VK_LEFT) {
+				if(direction>0) {
+					direction--;
+				}else {
+					direction=7;
+				}
+			}
+			if(k.getKeyCode() == KeyEvent.VK_RIGHT) {
+				
+				if(direction<7) {
+					direction++;
+				}else {
+					direction=0;
+				}
+			}
+			if(k.getKeyCode() == KeyEvent.VK_UP) {
+				switch(direction) {
+					case 0:
+						if(isBuilding) {
+							s+=pointer.up.toString();
+						}
+						pointer=pointer.up;
+						break;
+					case 1:
+						if(isBuilding) {
+							s+=pointer.upright.toString();
+						}
+						pointer=pointer.upright;
+						break;
+					case 2:
+						if(isBuilding) {
+							s+=pointer.right.toString();
+						}
+						pointer=pointer.right;
+						break;
+					case 3:
+						if(isBuilding) {
+							s+=pointer.downright.toString();
+						}
+						pointer=pointer.downright;
+						break;
+					case 4:
+						if(isBuilding) {
+							s+=pointer.down.toString();
+						}
+						pointer=pointer.down;
+						break;
+					case 5:
+						if(isBuilding) {
+							s+=pointer.downleft.toString();
+						}
+						pointer=pointer.downleft;
+						break;
+					case 6:
+						if(isBuilding) {
+							s+=pointer.left.toString();
+						}
+						pointer=pointer.left;
+						break;
+					case 7:
+						if(isBuilding) {
+							s+=pointer.upleft.toString();
+						}
+						pointer=pointer.upleft;
+						break;
+				}
+				cover = new Point(pointer.getData().getX(), pointer.getData().getY());
+			}
+			System.out.println(s);
+			this.repaint();
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyTyped(KeyEvent k) {
+		// TODO Auto-generated method stub
+	}
 }
 

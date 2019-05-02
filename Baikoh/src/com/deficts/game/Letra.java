@@ -3,12 +3,14 @@ package com.deficts.game;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.geom.Area;
 import java.util.Random;
 
 public class Letra {
 	private String letra;
 	private Color color;
 	private int x,y;
+	private Area a;
 	Random ran=new Random();
 	
 	public Letra(String letra, int x, int y) {
@@ -26,18 +28,16 @@ public class Letra {
 	}
 	
 	private Color selectColor() {
-		int col=ran.nextInt(9);
+		int col=ran.nextInt(7);
 		
 		switch (col) {
-		case 0: return Color.red; 
+		case 0: return Color.pink; 
 		case 1: return Color.yellow;
 		case 2: return Color.blue;
 		case 3: return Color.cyan; 
 		case 4: return Color.GREEN;
 		case 5: return Color.magenta; 
 		case 6: return Color.orange;
-		case 7: return Color.PINK;
-		case 8: return Color.WHITE;
 		
 		default:
 			return Color.BLACK;
@@ -58,6 +58,14 @@ public class Letra {
 	
 	public String toString() {
 		return this.letra;
+	}
+
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
 	}
 	
 }

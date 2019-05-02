@@ -1,6 +1,9 @@
 package com.deficts.game;
 
+import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.util.HashMap;
 import java.util.Random;
 
 public class Hec{
@@ -21,86 +24,63 @@ public class Hec{
 	}
 	
 	private void mapeo() {
-		this.esquina=this.tablero[0][7];
+		this.esquina=this.tablero[7][0];
 		for (int i = 0; i < tablero.length; i++) {
 			for (int j = 0; j < tablero[i].length; j++) {
-				if(i>0 && i<7 && j>0 && j<7) {
-					this.tablero[i][j].up=this.tablero[i][j-1];
-					this.tablero[i][j].down=this.tablero[i][j+1];
-					this.tablero[i][j].left=this.tablero[i-1][j];
-					this.tablero[i][j].right=this.tablero[i+1][j];
-					this.tablero[i][j].upleft=this.tablero[i-1][j-1];
-					this.tablero[i][j].upright=this.tablero[i+1][j-1];
-					this.tablero[i][j].downleft=this.tablero[i-1][j+1];
-					this.tablero[i][j].downright=this.tablero[i+1][j+1];
+				if(i==0 && j==0) {
+					tablero[i][j].down=tablero[i+1][j];
+					tablero[i][j].right=tablero[i][j+1];
+					tablero[i][j].downright=tablero[i+1][j+1];
+				}else if(i==0 && j==7 ) {
+					tablero[i][j].down=tablero[i+1][j];
+					tablero[i][j].left=tablero[i][j-1];
+					tablero[i][j].downleft=tablero[i+1][j-1];
+				}else if(i==7 && j==0 ) {
+					tablero[i][j].up=tablero[i-1][j];
+					tablero[i][j].right=tablero[i][j+1];
+					tablero[i][j].upright=tablero[i-1][j+1];
+				}else if(i==7 && j==7 ) {
+					tablero[i][j].up=tablero[i-1][j];
+					tablero[i][j].left=tablero[i][j-1];
+					tablero[i][j].upright=tablero[i-1][j-1];
+				}else if (i==0 && j<7 && j>0) {
+					tablero[i][j].down=tablero[i+1][j];
+					tablero[i][j].right=tablero[i][j+1];
+					tablero[i][j].downright=tablero[i+1][j+1];
+					tablero[i][j].left=tablero[i][j-1];
+					tablero[i][j].downleft=tablero[i+1][j-1];
 				}
-				else {
-					if(i==0) {
-						this.tablero[i][j].upleft=null;
-						this.tablero[i][j].left=null;
-						this.tablero[i][j].downleft=null;
-						this.tablero[i][j].right=this.tablero[i+1][j];
-						if(j==7) {
-							this.tablero[i][j].down=null;
-							this.tablero[i][j].downright=null;
-						}
-						else {
-							this.tablero[i][j].down=this.tablero[i+1][j];
-							this.tablero[i][j].downright=this.tablero[i+1][j+1];
-						}
-						if(j==0) {
-							this.tablero[i][j].up=null;
-							this.tablero[i][j].upright=null;
-						}
-						else {
-							this.tablero[i][j].up=this.tablero[i][j-1];
-							this.tablero[i][j].upright=this.tablero[i+1][j-1];
-						}
-						
-					}
-					else if(i==7) {
-						this.tablero[i][j].right=null;
-						this.tablero[i][j].upright=null;
-						this.tablero[i][j].downright=null;
-						this.tablero[i][j].left=this.tablero[i-1][j];
-						if(j==0) {
-							this.tablero[i][j].up=null;
-							this.tablero[i][j].upright=null;
-						}
-						else {
-							this.tablero[i][j].up=this.tablero[i][j-1];
-							this.tablero[i][j].upleft=this.tablero[i-1][j-1];
-						}
-						if(j==7) {
-							this.tablero[i][j].down=null;
-							this.tablero[i][j].downright=null;
-						}
-						else {
-							this.tablero[i][j].down=this.tablero[i][j+1];
-							this.tablero[i][j].downleft=this.tablero[i-1][j+1];
-						}
-					}
-					else if(j==0 && i>0 && i<7) {
-						this.tablero[i][j].up=null;
-						this.tablero[i][j].upright=null;
-						this.tablero[i][j].upleft=null;
-						this.tablero[i][j].left=this.tablero[i-1][j];
-						this.tablero[i][j].right=this.tablero[i+1][j];
-						this.tablero[i][j].down=this.tablero[i][j+1];
-						this.tablero[i][j].downright=this.tablero[i+1][j+1];
-						this.tablero[i][j].downleft=this.tablero[i-1][j+1];
-					}
-					else if(j==7 && i>0 && i<7) {
-						this.tablero[i][j].down=null;
-						this.tablero[i][j].downleft=null;
-						this.tablero[i][j].downright=null;
-						this.tablero[i][j].up=this.tablero[i][j-1];
-						this.tablero[i][j].upright=this.tablero[i+1][j-1];
-						this.tablero[i][j].upleft=this.tablero[i-1][j-1];
-						this.tablero[i][j].left=this.tablero[i-1][j];
-						this.tablero[i][j].right=this.tablero[i+1][j];
-					}
+				else if (i==7 && j<7 && j>0) {
+					tablero[i][j].up=tablero[i-1][j];
+					tablero[i][j].right=tablero[i][j+1];
+					tablero[i][j].upright=tablero[i-1][j+1];
+					tablero[i][j].left=tablero[i][j-1];
+					tablero[i][j].upleft=tablero[i-1][j-1];
 				}
+				else if(j==0 && i<7 && i>0) {
+					tablero[i][j].down=tablero[i+1][j];
+					tablero[i][j].up=tablero[i-1][j];
+					tablero[i][j].downright=tablero[i+1][j+1];
+					tablero[i][j].right=tablero[i][j+1];
+					tablero[i][j].upright=tablero[i-1][j+1];
+				}
+				else if(j==7 && i<7 && i>0) {
+					tablero[i][j].up=tablero[i-1][j];
+					tablero[i][j].down=tablero[i+1][j];
+					tablero[i][j].left=tablero[i][j-1];
+					tablero[i][j].downleft=tablero[i+1][j-1];
+					tablero[i][j].upleft=tablero[i-1][j-1];
+				}else {
+					tablero[i][j].down=tablero[i+1][j];
+					tablero[i][j].right=tablero[i][j+1];
+					tablero[i][j].downright=tablero[i+1][j+1];
+					tablero[i][j].left=tablero[i][j-1];
+					tablero[i][j].downleft=tablero[i+1][j-1];
+					tablero[i][j].up=tablero[i-1][j];
+					tablero[i][j].upright=tablero[i-1][j+1];
+					tablero[i][j].upleft=tablero[i-1][j-1];
+				}
+				
 			}
 		}
 		
@@ -113,7 +93,7 @@ public class Hec{
 		for (int i = 0; i < this.tablero.length; i++) {
 			for (int j = 0; j < this.tablero[i].length; j++) {
 				if(contador==2) {
-					this.tablero[i][j]=new Node <Letra> (new Letra(getVocal(), x,y));					
+					this.tablero[i][j]=new Node <Letra> (new Letra(getVocal(), x,y, Color.white));
 					contador=0;
 				}
 				else {
@@ -125,7 +105,6 @@ public class Hec{
 			y+=55;
 			x=90;
 		}
-		
 		mapeo();
 	}
 	
@@ -140,7 +119,18 @@ public class Hec{
 	public void pinta(int i, int j, Graphics g) {
 		this.tablero[i][j].getData().draw(g);
 	}
-	
+	@Override
+	public String toString() {
+		String s = "";
+		for (int i = 0; i < tablero.length; i++) {
+			s+="[";
+			for (int j = 0; j < tablero[i].length; j++) {
+				s+=tablero[i][j];
+			}
+			s+="] \n";
+		}
+		return s;
+	}
 }
 
 class Node<E>{
