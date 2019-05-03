@@ -7,6 +7,14 @@ import java.awt.geom.Area;
 import java.util.Random;
 
 public class Letra {
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+	}
+
 	private String letra;
 	private Color color;
 	private int x,y;
@@ -67,5 +75,14 @@ public class Letra {
 	public int getY() {
 		return y;
 	}
+
+	public String getLetra() {
+		return letra;
+	}
+
+	public void setLetra(String letra) {
+		this.letra = letra;
+	}
+	
 	
 }

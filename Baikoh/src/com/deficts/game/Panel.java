@@ -29,7 +29,8 @@ import javax.swing.JPanel;
 
 public class Panel extends JPanel implements KeyListener,Runnable, MouseListener, MouseMotionListener{
 	
-	//private Letra[][] tablero= new Letra[8][8]; // Letra[fila][columna]
+	private String[] tablero= new String[12]; // Letra[fila][columna]
+	private Letra[] tablero2=new Letra[12];
 	private int state;
 	
 	private Diccionario d = new Diccionario();
@@ -41,7 +42,7 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 	
 	private Hec hec;
 	
-	private boolean start, isBuilding;
+	private boolean start, isBuilding, bandera=true;
 	
 	private Random ran=new Random();
 	
@@ -57,12 +58,16 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 	
 	private int direction= 0;
 	
+	private int puntaje=0;
+	
+	private int contadorTablero=0;
+	
 	public Panel() {
 		super();
 		this.setPreferredSize(new Dimension(600,810));
 		this.setBackground(Color.darkGray.darker());
 		this.setLayout(null);
-		this.state=1;
+		this.state=2;
 		this.addKeyListener(this);
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
@@ -72,7 +77,7 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 		this.c0=this.c1=this.c2=this.c3=this.c4=this.c5=this.c6=this.c7=4;
 		crearBotones();
 		pointer=hec.getEsquina();
-		cover = new Point(pointer.getData().getX(), pointer.getData().getY());
+		cover = new Point(pointer.getDato().getX(), pointer.getDato().getY());
 	}
 	
 	public void run() {
@@ -85,7 +90,7 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 						
 					if(num==0) {			
 						if(this.c0>=0) {
-							this.hec.tablero[c0--][0].getData().draw(this.getGraphics());
+							this.hec.tablero[c0--][0].getDato().draw(this.getGraphics());
 						}
 						else {
 							this.state=3;
@@ -94,7 +99,7 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 					}
 					else if(num==1) {
 						if(this.c1>=0) {
-							this.hec.tablero[c1--][1].getData().draw(this.getGraphics());
+							this.hec.tablero[c1--][1].getDato().draw(this.getGraphics());
 						}
 						else {
 							this.state=3;
@@ -103,7 +108,7 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 					}
 					else if(num==2) {
 						if(this.c2>=0) {
-							this.hec.tablero[c2--][2].getData().draw(this.getGraphics());
+							this.hec.tablero[c2--][2].getDato().draw(this.getGraphics());
 						}
 						else {
 							this.state=3;
@@ -112,7 +117,7 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 					}
 					else if(num==3) {
 						if(this.c3>=0) {
-							this.hec.tablero[c3--][3].getData().draw(this.getGraphics());
+							this.hec.tablero[c3--][3].getDato().draw(this.getGraphics());
 						}
 						else {
 							this.state=3;
@@ -121,7 +126,7 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 					}
 					else if(num==4) {
 						if(this.c4>=0) {
-							this.hec.tablero[c4--][4].getData().draw(this.getGraphics());
+							this.hec.tablero[c4--][4].getDato().draw(this.getGraphics());
 						}
 						else {
 							this.state=3;
@@ -130,7 +135,7 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 					}
 					else if(num==5) {
 						if(c5>=0) {
-							this.hec.tablero[c5--][5].getData().draw(this.getGraphics());
+							this.hec.tablero[c5--][5].getDato().draw(this.getGraphics());
 						}
 						else {
 							this.state=3;
@@ -139,7 +144,7 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 					}
 					else if(num==6) {
 						if(this.c6>=0) {
-							this.hec.tablero[c6--][6].getData().draw(this.getGraphics());
+							this.hec.tablero[c6--][6].getDato().draw(this.getGraphics());
 						}
 						else {
 							this.state=3;
@@ -148,7 +153,7 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 					}
 					else if(num==7) {
 						if(this.c7>=0) {
-							this.hec.tablero[c7--][7].getData().draw(this.getGraphics());
+							this.hec.tablero[c7--][7].getDato().draw(this.getGraphics());
 						}
 						else {
 							this.state=3;
@@ -185,6 +190,8 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 			this.requestFocusInWindow();
 			g.setColor(Color.red);
 			pintaFlecha(g, new Point(cover.x, cover.y));
+			g.drawString("Score: "+puntaje, 400, 70);
+			this.pintaTablero(g);
 		}
 		else if(this.state==2) {
 			this.btnStart.setVisible(false);
@@ -200,14 +207,13 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 			this.btnExit.setVisible(false);
 			g.setFont(new Font("Helvetica", Font.BOLD, 70));
 			g.setColor(Color.white);
-			g.drawString("End of", 180, 350);
+			g.drawString("End of", 180, 350); 
 			g.drawString("the game!!", 120, 450);
 			this.btnBack.setVisible(true);
 			this.c0=this.c1=this.c2=this.c3=this.c4=this.c5=this.c6=this.c7=4;
 			this.hec=new Hec();
 		}
 	}
-	
 	private void crearBotones() {
 		this.btnStart = new JButton("START");
 		this.btnStart.setFont(new Font("Arial",Font.PLAIN,55));
@@ -271,6 +277,18 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 		g.drawString("Press the letters in order", 50, 120);
 		g.drawString("to form words", 50, 160);
 		
+		g.drawString("Click on the screen", 50, 300);
+		g.drawString("to shuffle", 50, 340);
+		
+		g.drawString("Move with the left and right arrow", 50, 420);
+		g.drawString("Move forward with up arrow", 50, 460);
+		
+		g.drawString("Start building the word by", 50, 520);
+		g.drawString("pressing space once", 50, 560);
+		g.drawString("Stop building the word by", 50, 620);
+		g.drawString("pressing space once", 50, 660);
+		
+		
 
 		g.drawString("-->",95, 227);
 		g.drawString("-->",179, 227);
@@ -286,6 +304,8 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 		e.draw(g);
 		a.draw(g);
 		r.draw(g);
+		
+		
 		
 	}
 	private void pintaCuadricula(Graphics g) {
@@ -311,11 +331,24 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 	private void llenadoInicial(Graphics g) {
 		for (int i = 0; i < this.hec.tablero.length; i++) {
 			for (int j = 0; j < this.hec.tablero[i].length; j++) {
-				this.hec.pinta(i,j,g);
+				this.hec.tablero[i][j].getDato().draw(g);
 			}
 		}
 	}
-	
+	private void pintaTablero(Graphics g) {
+//		int x=46;
+//		int y=662;
+		int x=55;
+		int y=695;
+		g.setColor(Color.white);
+		for (int i = 0; i < 12; i++) {
+			if(this.tablero[i]!=null) {
+				g.drawString(this.tablero[i], x, y);
+			}
+			
+			x+=42;
+		}
+	}
 	private void pintaFlecha(Graphics g, Point p) {
 		switch(direction) {
 			case 0:
@@ -365,6 +398,8 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 		//this.start=true;
 		//run();
 		//System.out.println(d.diccionario.containsKey("achilles".hashCode()));
+		hec.shuffle();
+		this.repaint();
 	}
 	@Override
 	public void mousePressed(MouseEvent e) {
@@ -415,11 +450,17 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 				if(isBuilding) {
 					this.isBuilding=false;
 					if(d.diccionario.containsKey(s.toLowerCase().hashCode())) {
+						puntaje+=s.length()*10;
+						System.out.println(puntaje);
 						System.out.println(true);
 					}else {
 						System.out.println(false);
 					}
 					s="";
+					this.contadorTablero=0;
+					this.tablero=new String[12];
+					this.bandera=true;
+					
 				}else {
 					this.isBuilding = true;
 					s+=pointer.toString();
@@ -441,59 +482,91 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 				}
 			}
 			if(k.getKeyCode() == KeyEvent.VK_UP) {
+				
+				if(this.bandera) {
+					this.tablero[contadorTablero++]=s;
+					this.bandera=false;
+				}
+				
 				switch(direction) {
 					case 0:
-						if(isBuilding) {
-							s+=pointer.up.toString();
+						if(pointer.up!=null) {
+							if(isBuilding) {
+								s+=pointer.up.toString();
+								this.tablero[contadorTablero++]=pointer.up.toString();
+								
+							}
+							pointer=pointer.up;
 						}
-						pointer=pointer.up;
 						break;
 					case 1:
-						if(isBuilding) {
-							s+=pointer.upright.toString();
+						if(pointer.upright!=null) {
+							if(isBuilding) {
+								s+=pointer.upright.toString();
+								this.tablero[contadorTablero++]=pointer.upright.toString();
+							}
+							pointer=pointer.upright;
 						}
-						pointer=pointer.upright;
 						break;
 					case 2:
-						if(isBuilding) {
-							s+=pointer.right.toString();
+						if(pointer.right!=null) {
+							if(isBuilding) {
+								s+=pointer.right.toString();
+								this.tablero[contadorTablero++]=pointer.right.toString();
+							}
+							pointer=pointer.right;
 						}
-						pointer=pointer.right;
 						break;
 					case 3:
-						if(isBuilding) {
-							s+=pointer.downright.toString();
+						if(pointer.downright!=null) {
+							if(isBuilding) {
+								s+=pointer.downright.toString();
+								this.tablero[contadorTablero++]=pointer.downright.toString();
+							}
+							pointer=pointer.downright;
 						}
-						pointer=pointer.downright;
+						
 						break;
 					case 4:
-						if(isBuilding) {
-							s+=pointer.down.toString();
+						if(pointer.down!=null) {
+							if(isBuilding) {
+								s+=pointer.down.toString();
+								this.tablero[contadorTablero++]=pointer.down.toString();
+							}
+							pointer=pointer.down;
 						}
-						pointer=pointer.down;
 						break;
 					case 5:
-						if(isBuilding) {
-							s+=pointer.downleft.toString();
+						if(pointer.downleft!=null) {
+							if(isBuilding) {
+								s+=pointer.downleft.toString();
+								this.tablero[contadorTablero++]=pointer.downleft.toString();
+							}
+							pointer=pointer.downleft;
 						}
-						pointer=pointer.downleft;
 						break;
 					case 6:
-						if(isBuilding) {
-							s+=pointer.left.toString();
+						if(pointer.left!=null) {
+							if(isBuilding) {
+								s+=pointer.left.toString();
+								this.tablero[contadorTablero++]=pointer.left.toString();
+							}
+							pointer=pointer.left;
 						}
-						pointer=pointer.left;
 						break;
 					case 7:
-						if(isBuilding) {
-							s+=pointer.upleft.toString();
+						if(pointer.upleft!=null) {
+							if(isBuilding) {
+								s+=pointer.upleft.toString();
+								this.tablero[contadorTablero++]=pointer.upleft.toString();
+							}
+							pointer=pointer.upleft;
 						}
-						pointer=pointer.upleft;
 						break;
 				}
-				cover = new Point(pointer.getData().getX(), pointer.getData().getY());
+				cover = new Point(pointer.getDato().getX(), pointer.getDato().getY());
 			}
-			System.out.println(s);
+			
 			this.repaint();
 		}
 	}

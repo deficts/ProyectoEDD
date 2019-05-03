@@ -115,10 +115,6 @@ public class Hec{
 	private String getConsonante() {
 		return consonantes[ran.nextInt(20)];
 	}
-	
-	public void pinta(int i, int j, Graphics g) {
-		this.tablero[i][j].getData().draw(g);
-	}
 	@Override
 	public String toString() {
 		String s = "";
@@ -130,6 +126,24 @@ public class Hec{
 			s+="] \n";
 		}
 		return s;
+	}
+
+	public void shuffle() {
+		// TODO Auto-generated method stub
+		Random random = new Random();
+		for (int i = tablero.length - 1; i > 0; i--) {
+	        for (int j = tablero[i].length - 1; j > 0; j--) {
+				int m = random.nextInt(i + 1);
+	            int n = random.nextInt(j + 1);
+
+	            String temp = tablero[i][j].getDato().getLetra();
+	            Color tmp = tablero[i][j].getDato().getColor();
+	            tablero[i][j].getDato().setLetra(tablero[m][n].getDato().getLetra());
+	            tablero[i][j].getDato().setColor(tablero[m][n].getDato().getColor());
+	            tablero[m][n].getDato().setLetra(temp);
+	            tablero[m][n].getDato().setColor(tmp);
+	        }
+	    }
 	}
 }
 
@@ -160,7 +174,10 @@ class Node<E>{
 		
 	}
 	
-	public E getData() {
+	public void setDato(E dato) {
+		this.dato=dato;
+	}
+	public E getDato() {
 		return this.dato;
 	}
 	
