@@ -23,11 +23,12 @@ import java.io.IOException;
 import java.rmi.dgc.DGC;
 import java.security.Key;
 import java.util.Random;
+import javax.swing.Timer;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-public class Panel extends JPanel implements KeyListener,Runnable, MouseListener, MouseMotionListener{
+public class Panel extends JPanel implements KeyListener,Runnable, MouseListener, MouseMotionListener, ActionListener{
 	
 	private String[] tablero= new String[12]; // Letra[fila][columna]
 	private Letra[] tablero2=new Letra[12];
@@ -40,9 +41,12 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 					btnExit,
 					btnBack;
 	
+	long startTime = System.currentTimeMillis();
+	long elapsedTime = 0L;
+	
 	private Hec hec;
 	
-	private boolean start, isBuilding, bandera=true;
+	private boolean start, isBuilding;
 	
 	private Random ran=new Random();
 	
@@ -54,6 +58,8 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 	
 	private String s="";
 	
+	private int countdown=12;//120000;
+	
 	private Point cover;
 	
 	private int direction= 0;
@@ -62,112 +68,30 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 	
 	private int contadorTablero=0;
 	
+	Timer timer;
+	
 	public Panel() {
 		super();
 		this.setPreferredSize(new Dimension(600,810));
 		this.setBackground(Color.darkGray.darker());
 		this.setLayout(null);
-		this.state=2;
+		this.state=1;
 		this.addKeyListener(this);
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 		this.start=false;
+		this.timer=new Timer(1000, this);
 		this.hec=new Hec();
 		this.hilo=new Thread(this);
 		this.c0=this.c1=this.c2=this.c3=this.c4=this.c5=this.c6=this.c7=4;
 		crearBotones();
 		pointer=hec.getEsquina();
 		cover = new Point(pointer.getDato().getX(), pointer.getDato().getY());
+		
 	}
 	
 	public void run() {
-		try {
-			if(this.start) {
-				while(true) {
-					int num=ran.nextInt(8);
-					System.out.println(num);
-					this.repaint();
-						
-					if(num==0) {			
-						if(this.c0>=0) {
-							this.hec.tablero[c0--][0].getDato().draw(this.getGraphics());
-						}
-						else {
-							this.state=3;
-							break;
-						}
-					}
-					else if(num==1) {
-						if(this.c1>=0) {
-							this.hec.tablero[c1--][1].getDato().draw(this.getGraphics());
-						}
-						else {
-							this.state=3;
-							break;
-						}
-					}
-					else if(num==2) {
-						if(this.c2>=0) {
-							this.hec.tablero[c2--][2].getDato().draw(this.getGraphics());
-						}
-						else {
-							this.state=3;
-							break;
-						}
-					}
-					else if(num==3) {
-						if(this.c3>=0) {
-							this.hec.tablero[c3--][3].getDato().draw(this.getGraphics());
-						}
-						else {
-							this.state=3;
-							break;
-						}
-					}
-					else if(num==4) {
-						if(this.c4>=0) {
-							this.hec.tablero[c4--][4].getDato().draw(this.getGraphics());
-						}
-						else {
-							this.state=3;
-							break;
-						}
-					}
-					else if(num==5) {
-						if(c5>=0) {
-							this.hec.tablero[c5--][5].getDato().draw(this.getGraphics());
-						}
-						else {
-							this.state=3;
-							break;
-						}
-					}
-					else if(num==6) {
-						if(this.c6>=0) {
-							this.hec.tablero[c6--][6].getDato().draw(this.getGraphics());
-						}
-						else {
-							this.state=3;
-							break;
-						}
-					}
-					else if(num==7) {
-						if(this.c7>=0) {
-							this.hec.tablero[c7--][7].getDato().draw(this.getGraphics());
-						}
-						else {
-							this.state=3;
-							break;
-						}
-					}
-					Thread.sleep(3000);
-				}
-			}
-			
-			
-		} catch (InterruptedException e) {
-			System.out.println("Error en sleep "+e);
-		}
+		
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -399,6 +323,7 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 		//run();
 		//System.out.println(d.diccionario.containsKey("achilles".hashCode()));
 		hec.shuffle();
+		timer.start();
 		this.repaint();
 	}
 	@Override
@@ -459,11 +384,11 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 					s="";
 					this.contadorTablero=0;
 					this.tablero=new String[12];
-					this.bandera=true;
 					
 				}else {
 					this.isBuilding = true;
 					s+=pointer.toString();
+					this.tablero[contadorTablero++]=pointer.toString();
 				}	
 			}
 			if(k.getKeyCode() == KeyEvent.VK_LEFT) {
@@ -483,10 +408,6 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 			}
 			if(k.getKeyCode() == KeyEvent.VK_UP) {
 				
-				if(this.bandera) {
-					this.tablero[contadorTablero++]=s;
-					this.bandera=false;
-				}
 				
 				switch(direction) {
 					case 0:
@@ -580,6 +501,18 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 	@Override
 	public void keyTyped(KeyEvent k) {
 		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		if(this.timer.isRunning()) {
+			System.out.println("corriendo");
+		}
+		else {
+			System.out.println("stop");
+		}
+		
 	}
 }
 
