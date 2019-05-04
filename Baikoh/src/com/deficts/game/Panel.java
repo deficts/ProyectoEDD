@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -12,6 +13,17 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+
 import javax.swing.Timer;
 
 import javax.swing.JButton;
@@ -27,7 +39,9 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 	private JButton btnStart,
 					btnOptions,
 					btnExit,
-					btnBack;
+					btnBack,
+					btnSubmit,
+					btnLeaderboard;
 	
 	private long startTime,
 				 elapsedTime;
@@ -40,6 +54,10 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 	
 	private String s="";
 	
+	private TextField tfNombre;
+	
+	FileWriter leaderboardFile;
+	
 	private int countdown,
 				direction,
 				puntaje,
@@ -49,19 +67,20 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 	
 	private Timer timer;
 	
-	public Panel() {
+	public Panel(){
 		super();
 		this.setPreferredSize(new Dimension(600,810));
 		this.setBackground(Color.darkGray.darker());
 		this.setLayout(null);
 		
-		this.state=0;
+		this.state=3;//0;
 		this.countdown=120000;
 		this.direction=this.puntaje=this.contadorTablero=0;
+		
 		this.timer=new Timer(1000, this);
 		this.hec=new Hec();
 		this.pointer=hec.getEsquina();
-		this.cover = new Point(pointer.getDato().getX(), pointer.getDato().getY());
+		this.cover=new Point(pointer.getDato().getX(), pointer.getDato().getY());
 		
 		this.addKeyListener(this);
 		this.addMouseListener(this);
@@ -78,6 +97,9 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 			this.btnOptions.setVisible(true);
 			this.btnExit.setVisible(true);
 			this.btnBack.setVisible(false);
+			this.btnSubmit.setVisible(false);
+			this.tfNombre.setVisible(false);
+			this.btnLeaderboard.setVisible(true);
 			
 		}
 		else if(this.state==1) {
@@ -85,19 +107,34 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 			this.btnOptions.setVisible(false);
 			this.btnExit.setVisible(false);
 			this.btnBack.setVisible(true);
+			this.btnSubmit.setVisible(false);
+			this.tfNombre.setVisible(false);
+			this.btnLeaderboard.setVisible(false);
+			
 			pintaCuadricula(g);
 			llenadoInicial(g);
+			pintaTablero(g);
+			
 			this.requestFocusInWindow();
 			g.setColor(Color.red);
 			pintaFlecha(g, new Point(cover.x, cover.y));
+			g.setColor(Color.GREEN);
 			g.drawString("Score: "+puntaje, 400, 70);
-			this.pintaTablero(g);
+			g.setColor(Color.cyan);
+			int time=(this.countdown-(int)this.elapsedTime+13)/1000;
+			g.drawString("Time left: "+time, 170, 70);
+			this.repaint();
+			
 		}
 		else if(this.state==2) {
 			this.btnStart.setVisible(false);
 			this.btnOptions.setVisible(false);
 			this.btnExit.setVisible(false);
 			this.btnBack.setVisible(true);
+			this.btnSubmit.setVisible(false);
+			this.tfNombre.setVisible(false);
+			this.btnLeaderboard.setVisible(false);
+			
 			pintaReglas(g);
 			
 		}
@@ -105,20 +142,130 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 			this.btnStart.setVisible(false);
 			this.btnOptions.setVisible(false);
 			this.btnExit.setVisible(false);
+			this.btnBack.setVisible(true);
+			this.btnSubmit.setVisible(true);
+			this.tfNombre.setVisible(true);
+			this.btnLeaderboard.setVisible(false);
+			
 			g.setFont(new Font("Helvetica", Font.BOLD, 70));
 			g.setColor(Color.white);
-			g.drawString("End of", 180, 350); 
-			g.drawString("the game!!", 120, 450);
-			this.btnBack.setVisible(true);
+			g.drawString("End of", 180, 200); 
+			g.drawString("the game!!", 120, 270);
+			g.setFont(new Font("Helvetica", Font.BOLD, 30));
+			g.drawString("Enter your name:", 10, 500);
+			g.setFont(new Font("Helvetica", Font.BOLD, 60));
+			g.setColor(Color.GREEN);
+			g.drawString("Final Score: "+this.puntaje, 100, 390);
+			this.puntaje=0;
 			this.hec=new Hec();
-			System.out.println(elapsedTime);
+			
+		}
+		else if(this.state==4) {
+			this.btnStart.setVisible(false);
+			this.btnOptions.setVisible(false);
+			this.btnExit.setVisible(false);
+			this.btnBack.setVisible(true);
+			this.btnSubmit.setVisible(false);
+			this.tfNombre.setVisible(false);
+			this.btnLeaderboard.setVisible(false);
+			
+			pintaLeaderboard(g);
+	
+			g.setFont(new Font("Helvetica", Font.BOLD, 60));
+			g.setColor(Color.orange);
+			g.drawString("Top 10", 220, 90);
+			
+		}
+		
+	}
+	
+	private void pintaLeaderboard(Graphics g) {
+		int y=220;
+		String linea;
+		g.setFont(new Font("Helvetica", Font.BOLD, 40));
+		g.setColor(Color.white);
+		try {
+			BufferedReader br=new BufferedReader(new FileReader("Leaderboard.txt"));
+			
+			for (int i = 0; i < 10; i++) {
+				if((linea=br.readLine())!=null) {
+					g.drawString(linea, 90, y);
+					linea=br.readLine();
+					g.drawString(linea, 400, y);
+				}
+				g.drawString("#"+(i+1), 5, y);
+				y+=60;
+			}
+			
+			br.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+		}
+		
+		
+		g.drawString("Name", 120, 150);
+		g.drawString("Score", 400, 150);
+		
+	}
+	private void ordenaLeaderBoard() throws IOException{
+		int contador=0;
+		int[] puntuaciones;
+		String[] nombres;
+		try {
+			BufferedReader br=new BufferedReader(new FileReader("Leaderboard.txt"));
+			while(br.readLine()!=null) {
+				contador++;
+			}
+			System.out.println(contador);
+			puntuaciones=new int[contador/2];
+			nombres=new String[contador/2];
+			
+			
+			BufferedReader br2=new BufferedReader(new FileReader("Leaderboard.txt"));
+			
+			for (int i = 0; i < contador/2; i++) {
+				nombres[i]=br2.readLine();
+				puntuaciones[i]=Integer.parseInt(br2.readLine());
+			}
+			
+			for (int i = 0; i < puntuaciones.length-1; i++) {
+				for (int j = 0; j < puntuaciones.length-1-i; j++) {
+					if(puntuaciones[j]<puntuaciones[j+1]) {
+						int tmp=puntuaciones[j];
+						puntuaciones[j]=puntuaciones[j+1];
+						puntuaciones[j+1]=tmp;
+						
+						String tmp2=nombres[j];
+						nombres[j]=nombres[j+1];
+						nombres[j+1]=tmp2;
+					}
+				}
+			}
+			
+			PrintWriter pw= new PrintWriter(new FileWriter("Leaderboard.txt"));
+			for (int i = 0; i < nombres.length; i++) {
+				pw.println(nombres[i]);
+				pw.println(puntuaciones[i]);
+			}
+			
+			pw.close();
+			br.close();
+			br2.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	private void crearBotones() {
 		this.btnStart = new JButton("START");
 		this.btnStart.setFont(new Font("Arial",Font.PLAIN,55));
 		this.btnStart.setForeground(Color.white);
-		this.btnStart.setBounds(100, 300 , 400, 100);
+		this.btnStart.setBounds(100, 240 , 400, 80);
 		this.btnStart.setBackground(null);
 		this.btnStart.setBorderPainted(false);
 		this.add(this.btnStart);
@@ -134,7 +281,7 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 		this.btnOptions= new JButton("OPTIONS");
 		this.btnOptions.setFont(new Font("Arial",Font.PLAIN,55));
 		this.btnOptions.setForeground(Color.white);
-		this.btnOptions.setBounds(100, 400 , 400, 100);
+		this.btnOptions.setBounds(100, 320 , 400, 80);
 		this.btnOptions.setBackground(null);
 		this.btnOptions.setBorderPainted(false);
 		this.add(btnOptions);
@@ -145,10 +292,25 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 			}
 		});
 		
+		this.btnLeaderboard= new JButton("LEADERBOARD");
+		this.btnLeaderboard.setFont(new Font("Arial",Font.PLAIN,50));
+		this.btnLeaderboard.setForeground(Color.white);
+		this.btnLeaderboard.setBounds(60,400 , 490, 80);
+		this.btnLeaderboard.setBackground(null);
+		this.btnLeaderboard.setBorderPainted(false);
+		this.btnLeaderboard.setOpaque(false);
+		this.add(this.btnLeaderboard);
+		this.btnLeaderboard.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+					state=4;
+					repaint();
+			}
+		});
+		
 		this.btnExit= new JButton("EXIT");
 		this.btnExit.setFont(new Font("Arial",Font.PLAIN,55));
 		this.btnExit.setForeground(Color.white);
-		this.btnExit.setBounds(100, 500 , 400, 100);
+		this.btnExit.setBounds(100, 480 , 400, 80);
 		this.btnExit.setBackground(null);
 		this.btnExit.setBorderPainted(false);
 		this.btnExit.setOpaque(false);
@@ -175,6 +337,36 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 					repaint();
 			}
 		});
+		
+		this.btnSubmit = new JButton("SUBMIT");
+		this.btnSubmit.setFont(new Font("Arial",Font.PLAIN,35));
+		this.btnSubmit.setForeground(Color.white);
+		this.btnSubmit.setBounds(200, 650 , 190, 100);
+		this.btnSubmit.setBackground(null);
+		this.btnSubmit.setBorderPainted(false);
+		this.add(this.btnSubmit);
+		this.btnSubmit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				try {
+					String input=tfNombre.getText()+"\n"+puntaje+"\n";
+					tfNombre.setText(tfNombre.getText());
+				    Files.write(Paths.get("Leaderboard.txt"), input.getBytes(), StandardOpenOption.APPEND);
+				    
+				    tfNombre.setText("");
+				    ordenaLeaderBoard();
+				}catch (IOException e2) {
+				    System.out.println("Error: "+e2);
+				}
+				
+				state=0;
+				repaint();
+			}
+		});
+		
+		this.tfNombre=new TextField();
+		this.tfNombre.setBounds(300, 480, 180, 25);
+		this.add(this.tfNombre);
 	}
 	private void pintaReglas(Graphics g) {
 		g.setColor(Color.WHITE);
@@ -481,7 +673,9 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 			if(this.elapsedTime>=this.countdown) {
 				this.state=3;
 				this.repaint();
+				this.timer.restart();
 				this.timer.stop();
+				this.elapsedTime=0;
 			}
 			System.out.println(this.elapsedTime);
 		}
