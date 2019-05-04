@@ -14,7 +14,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -31,7 +30,7 @@ import javax.swing.JPanel;
 
 public class Panel extends JPanel implements KeyListener,MouseListener, MouseMotionListener, ActionListener{
 	
-	private String[] tablero= new String[12]; // Letra[fila][columna]
+	private String[] tablero= new String[12];
 	private int state;
 	
 	private Diccionario d = new Diccionario();
@@ -199,10 +198,8 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 			
 			br.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			
 		}
@@ -212,6 +209,7 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 		g.drawString("Score", 400, 150);
 		
 	}
+	
 	private void ordenaLeaderBoard() throws IOException{
 		int contador=0;
 		int[] puntuaciones;
@@ -257,10 +255,10 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 			br.close();
 			br2.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+	
 	private void crearBotones() {
 		this.btnStart = new JButton("START");
 		this.btnStart.setFont(new Font("Arial",Font.PLAIN,55));
@@ -368,6 +366,7 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 		this.tfNombre.setBounds(300, 480, 180, 25);
 		this.add(this.tfNombre);
 	}
+	
 	private void pintaReglas(Graphics g) {
 		g.setColor(Color.WHITE);
 		g.setFont(new Font("Helvetica", Font.BOLD, 30));
@@ -405,6 +404,7 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 		
 		
 	}
+	
 	private void pintaCuadricula(Graphics g) {
 		int x=90;
 		int y=150;
@@ -425,6 +425,7 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 		}
 		
 	}
+	
 	private void llenadoInicial(Graphics g) {
 		for (int i = 0; i < this.hec.tablero.length; i++) {
 			for (int j = 0; j < this.hec.tablero[i].length; j++) {
@@ -432,9 +433,8 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 			}
 		}
 	}
+	
 	private void pintaTablero(Graphics g) {
-//		int x=46;
-//		int y=662;
 		int x=55;
 		int y=695;
 		g.setColor(Color.white);
@@ -446,6 +446,7 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 			x+=42;
 		}
 	}
+	
 	private void pintaFlecha(Graphics g, Point p) {
 		switch(direction) {
 			case 0:
@@ -490,40 +491,13 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 				break;
 		}
 	}
+	
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		hec.shuffle();
 		this.repaint();
 	}
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		
-		
-	}
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void mouseDragged(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void mouseMoved(MouseEvent e) {
-
-	}
+	
 	public boolean mouseBounds(int mx, int my) {
 		if(mx>=90 && mx<=530 && my>=150 && my<=590) {
 			return true;
@@ -532,9 +506,9 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 			return false;
 		}
 	}
+	
 	@Override
 	public void keyPressed(KeyEvent k) {
-		// TODO Auto-generated method stub
 		if(this.state == 1) {
 			if(k.getKeyCode() == KeyEvent.VK_SPACE) {
 				if(isBuilding) {
@@ -656,18 +630,9 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 			this.repaint();
 		}
 	}
-	@Override
-	public void keyReleased(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void keyTyped(KeyEvent k) {
-		// TODO Auto-generated method stub
-	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		if(this.timer.isRunning()) {
 			this.elapsedTime = System.currentTimeMillis()-startTime;
 			if(this.elapsedTime>=this.countdown) {
@@ -680,5 +645,45 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 			System.out.println(this.elapsedTime);
 		}
 	}
+	
+	@Override
+	public void mousePressed(MouseEvent e) {
+		
+	}
+	
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		
+	}
+	
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		
+	}
+	
+	@Override
+	public void mouseExited(MouseEvent e) {
+		
+	}
+	
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		
+	}
+	
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		
+	}
+	
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		
+	}
+	
+	@Override
+	public void keyTyped(KeyEvent k) {
+	}
+	
 }
 
