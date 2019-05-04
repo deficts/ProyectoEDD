@@ -4,11 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Polygon;
-import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -16,22 +12,14 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.font.ShapeGraphicAttribute;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
-import java.io.IOException;
-import java.rmi.dgc.DGC;
-import java.security.Key;
-import java.util.Random;
 import javax.swing.Timer;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-public class Panel extends JPanel implements KeyListener,Runnable, MouseListener, MouseMotionListener, ActionListener{
+public class Panel extends JPanel implements KeyListener,MouseListener, MouseMotionListener, ActionListener{
 	
 	private String[] tablero= new String[12]; // Letra[fila][columna]
-	private Letra[] tablero2=new Letra[12];
 	private int state;
 	
 	private Diccionario d = new Diccionario();
@@ -41,57 +29,45 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 					btnExit,
 					btnBack;
 	
-	long startTime = System.currentTimeMillis();
-	long elapsedTime = 0L;
+	private long startTime,
+				 elapsedTime;
 	
 	private Hec hec;
 	
-	private boolean start, isBuilding;
-	
-	private Random ran=new Random();
-	
-	private int c0,c1,c2,c3,c4,c5,c6,c7;
-	
-	private Thread hilo;
+	private boolean isBuilding;
 	
 	private Node<Letra> pointer;
 	
 	private String s="";
 	
-	private int countdown=12;//120000;
+	private int countdown,
+				direction,
+				puntaje,
+				contadorTablero;
 	
 	private Point cover;
 	
-	private int direction= 0;
-	
-	private int puntaje=0;
-	
-	private int contadorTablero=0;
-	
-	Timer timer;
+	private Timer timer;
 	
 	public Panel() {
 		super();
 		this.setPreferredSize(new Dimension(600,810));
 		this.setBackground(Color.darkGray.darker());
 		this.setLayout(null);
-		this.state=1;
+		
+		this.state=0;
+		this.countdown=120000;
+		this.direction=this.puntaje=this.contadorTablero=0;
+		this.timer=new Timer(1000, this);
+		this.hec=new Hec();
+		this.pointer=hec.getEsquina();
+		this.cover = new Point(pointer.getDato().getX(), pointer.getDato().getY());
+		
 		this.addKeyListener(this);
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
-		this.start=false;
-		this.timer=new Timer(1000, this);
-		this.hec=new Hec();
-		this.hilo=new Thread(this);
-		this.c0=this.c1=this.c2=this.c3=this.c4=this.c5=this.c6=this.c7=4;
+		
 		crearBotones();
-		pointer=hec.getEsquina();
-		cover = new Point(pointer.getDato().getX(), pointer.getDato().getY());
-		
-	}
-	
-	public void run() {
-		
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -134,8 +110,8 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 			g.drawString("End of", 180, 350); 
 			g.drawString("the game!!", 120, 450);
 			this.btnBack.setVisible(true);
-			this.c0=this.c1=this.c2=this.c3=this.c4=this.c5=this.c6=this.c7=4;
 			this.hec=new Hec();
+			System.out.println(elapsedTime);
 		}
 	}
 	private void crearBotones() {
@@ -149,6 +125,8 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 		this.btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				state=1;
+//				timer.start();
+				startTime = System.currentTimeMillis();
 				repaint();
 			}
 		});
@@ -191,6 +169,9 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 		this.btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 					state=0;
+					timer.restart();
+					timer.stop();
+					elapsedTime=0;
 					repaint();
 			}
 		});
@@ -319,11 +300,7 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 	}
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		//this.start=true;
-		//run();
-		//System.out.println(d.diccionario.containsKey("achilles".hashCode()));
 		hec.shuffle();
-		timer.start();
 		this.repaint();
 	}
 	@Override
@@ -346,18 +323,15 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 		// TODO Auto-generated method stub
 		
 	}
-
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
-
 	@Override
 	public void mouseMoved(MouseEvent e) {
 
 	}
-	
 	public boolean mouseBounds(int mx, int my) {
 		if(mx>=90 && mx<=530 && my>=150 && my<=590) {
 			return true;
@@ -366,7 +340,6 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 			return false;
 		}
 	}
-
 	@Override
 	public void keyPressed(KeyEvent k) {
 		// TODO Auto-generated method stub
@@ -491,28 +464,27 @@ public class Panel extends JPanel implements KeyListener,Runnable, MouseListener
 			this.repaint();
 		}
 	}
-
 	@Override
 	public void keyReleased(KeyEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}
-
 	@Override
 	public void keyTyped(KeyEvent k) {
 		// TODO Auto-generated method stub
 	}
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if(this.timer.isRunning()) {
-			System.out.println("corriendo");
+			this.elapsedTime = System.currentTimeMillis()-startTime;
+			if(this.elapsedTime>=this.countdown) {
+				this.state=3;
+				this.repaint();
+				this.timer.stop();
+			}
+			System.out.println(this.elapsedTime);
 		}
-		else {
-			System.out.println("stop");
-		}
-		
 	}
 }
 
