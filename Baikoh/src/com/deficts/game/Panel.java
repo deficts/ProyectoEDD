@@ -72,14 +72,10 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 		this.setBackground(Color.darkGray.darker());
 		this.setLayout(null);
 		
-		this.state=3;//0;
+		this.state=0;
 		this.countdown=120000;
 		this.direction=this.puntaje=this.contadorTablero=0;
-		
 		this.timer=new Timer(1000, this);
-		this.hec=new Hec();
-		this.pointer=hec.getEsquina();
-		this.cover=new Point(pointer.getDato().getX(), pointer.getDato().getY());
 		
 		this.addKeyListener(this);
 		this.addMouseListener(this);
@@ -155,8 +151,6 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 			g.setFont(new Font("Helvetica", Font.BOLD, 60));
 			g.setColor(Color.GREEN);
 			g.drawString("Final Score: "+this.puntaje, 100, 390);
-			this.puntaje=0;
-			this.hec=new Hec();
 			
 		}
 		else if(this.state==4) {
@@ -270,7 +264,10 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 		this.btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				state=1;
-//				timer.start();
+				hec=new Hec();
+				pointer=hec.getEsquina();
+				cover=new Point(pointer.getDato().getX(), pointer.getDato().getY());
+				timer.start();
 				startTime = System.currentTimeMillis();
 				repaint();
 			}
@@ -329,6 +326,7 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 		this.btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 					state=0;
+					puntaje=0;
 					timer.restart();
 					timer.stop();
 					elapsedTime=0;
@@ -358,6 +356,7 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 				}
 				
 				state=0;
+				puntaje=0;
 				repaint();
 			}
 		});
@@ -642,7 +641,6 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 				this.timer.stop();
 				this.elapsedTime=0;
 			}
-			System.out.println(this.elapsedTime);
 		}
 	}
 	
