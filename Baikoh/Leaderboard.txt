@@ -2,5 +2,7 @@ Cinthya
 3000
 Hector
 1000
+Laura
+180
 Diego
 90
