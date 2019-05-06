@@ -552,85 +552,88 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 					direction=0;
 				}
 			}
-			if(k.getKeyCode() == KeyEvent.VK_UP) {
-				switch(direction) {
-					case 0:
-						if(pointer.up!=null) {
-							if(isBuilding) {
-								s+=pointer.up.toString();
-								this.tablero[contadorTablero++]=pointer.up.toString();
-								
+			if(this.contadorTablero<this.tablero.length) {
+				if(k.getKeyCode() == KeyEvent.VK_UP) {
+					switch(direction) {
+						case 0:
+							if(pointer.up!=null) {
+								if(isBuilding) {
+									s+=pointer.up.toString();
+									this.tablero[contadorTablero++]=pointer.up.toString();
+									
+								}
+								pointer=pointer.up;
 							}
-							pointer=pointer.up;
-						}
-						break;
-					case 1:
-						if(pointer.upright!=null) {
-							if(isBuilding) {
-								s+=pointer.upright.toString();
-								this.tablero[contadorTablero++]=pointer.upright.toString();
+							break;
+						case 1:
+							if(pointer.upright!=null) {
+								if(isBuilding) {
+									s+=pointer.upright.toString();
+									this.tablero[contadorTablero++]=pointer.upright.toString();
+								}
+								pointer=pointer.upright;
 							}
-							pointer=pointer.upright;
-						}
-						break;
-					case 2:
-						if(pointer.right!=null) {
-							if(isBuilding) {
-								s+=pointer.right.toString();
-								this.tablero[contadorTablero++]=pointer.right.toString();
+							break;
+						case 2:
+							if(pointer.right!=null) {
+								if(isBuilding) {
+									s+=pointer.right.toString();
+									this.tablero[contadorTablero++]=pointer.right.toString();
+								}
+								pointer=pointer.right;
 							}
-							pointer=pointer.right;
-						}
-						break;
-					case 3:
-						if(pointer.downright!=null) {
-							if(isBuilding) {
-								s+=pointer.downright.toString();
-								this.tablero[contadorTablero++]=pointer.downright.toString();
+							break;
+						case 3:
+							if(pointer.downright!=null) {
+								if(isBuilding) {
+									s+=pointer.downright.toString();
+									this.tablero[contadorTablero++]=pointer.downright.toString();
+								}
+								pointer=pointer.downright;
 							}
-							pointer=pointer.downright;
-						}
-						
-						break;
-					case 4:
-						if(pointer.down!=null) {
-							if(isBuilding) {
-								s+=pointer.down.toString();
-								this.tablero[contadorTablero++]=pointer.down.toString();
+							
+							break;
+						case 4:
+							if(pointer.down!=null) {
+								if(isBuilding) {
+									s+=pointer.down.toString();
+									this.tablero[contadorTablero++]=pointer.down.toString();
+								}
+								pointer=pointer.down;
 							}
-							pointer=pointer.down;
-						}
-						break;
-					case 5:
-						if(pointer.downleft!=null) {
-							if(isBuilding) {
-								s+=pointer.downleft.toString();
-								this.tablero[contadorTablero++]=pointer.downleft.toString();
+							break;
+						case 5:
+							if(pointer.downleft!=null) {
+								if(isBuilding) {
+									s+=pointer.downleft.toString();
+									this.tablero[contadorTablero++]=pointer.downleft.toString();
+								}
+								pointer=pointer.downleft;
 							}
-							pointer=pointer.downleft;
-						}
-						break;
-					case 6:
-						if(pointer.left!=null) {
-							if(isBuilding) {
-								s+=pointer.left.toString();
-								this.tablero[contadorTablero++]=pointer.left.toString();
+							break;
+						case 6:
+							if(pointer.left!=null) {
+								if(isBuilding) {
+									s+=pointer.left.toString();
+									this.tablero[contadorTablero++]=pointer.left.toString();
+								}
+								pointer=pointer.left;
 							}
-							pointer=pointer.left;
-						}
-						break;
-					case 7:
-						if(pointer.upleft!=null) {
-							if(isBuilding) {
-								s+=pointer.upleft.toString();
-								this.tablero[contadorTablero++]=pointer.upleft.toString();
+							break;
+						case 7:
+							if(pointer.upleft!=null) {
+								if(isBuilding) {
+									s+=pointer.upleft.toString();
+									this.tablero[contadorTablero++]=pointer.upleft.toString();
+								}
+								pointer=pointer.upleft;
 							}
-							pointer=pointer.upleft;
-						}
-						break;
+							break;
+					}
+					cover = new Point(pointer.getDato().getX(), pointer.getDato().getY());
 				}
-				cover = new Point(pointer.getDato().getX(), pointer.getDato().getY());
-			}
+			
+			} 
 			
 			this.repaint();
 		}
