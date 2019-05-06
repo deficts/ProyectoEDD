@@ -493,7 +493,12 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		hec.shuffle();
+		try{
+			hec.shuffle();
+		}catch(NullPointerException ex) {
+			
+		}
+		
 		this.repaint();
 	}
 	
@@ -509,6 +514,9 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 	@Override
 	public void keyPressed(KeyEvent k) {
 		if(this.state == 1) {
+			if(k.getKeyCode() == KeyEvent.VK_H) {
+				hint(pointer.toString());
+			}
 			if(k.getKeyCode() == KeyEvent.VK_SPACE) {
 				if(isBuilding) {
 					this.isBuilding=false;
@@ -545,8 +553,6 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 				}
 			}
 			if(k.getKeyCode() == KeyEvent.VK_UP) {
-				
-				
 				switch(direction) {
 					case 0:
 						if(pointer.up!=null) {
@@ -630,6 +636,99 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 		}
 	}
 	
+	private void hint(String s) {
+		System.out.println(s);
+		if(s.length()>6) {
+			return;
+		}
+		
+		if(pointer.down!=null) {
+			if(d.diccionario.containsKey((s+pointer.down.toString()).hashCode())) {
+				pointer = pointer.down;
+				cover = new Point(pointer.getDato().getX(), pointer.getDato().getY());
+				this.repaint();
+				System.out.println(s+pointer.toString());
+				hint(s+pointer.toString());
+			}
+		}
+		
+		else if(pointer.downleft!=null) {
+			if(d.diccionario.containsKey((s+pointer.downleft.toString()).hashCode())) {
+				pointer = pointer.downleft;
+				cover = new Point(pointer.getDato().getX(), pointer.getDato().getY());
+				this.repaint();
+				System.out.println(s+pointer.toString());
+				hint(s+pointer.toString());
+			}
+		}
+		
+		else if(pointer.downright!=null) {
+			if(d.diccionario.containsKey((s+pointer.downright.toString()).hashCode())) {
+				pointer = pointer.downright;
+				cover = new Point(pointer.getDato().getX(), pointer.getDato().getY());
+				this.repaint();
+				System.out.println(s+pointer.toString());
+				hint(s+pointer.toString());
+			}
+		}
+		
+		else if(pointer.right!=null) {
+			if(d.diccionario.containsKey((s+pointer.right.toString()).hashCode())) {
+				pointer = pointer.right;
+				cover = new Point(pointer.getDato().getX(), pointer.getDato().getY());
+				this.repaint();
+				System.out.println(s+pointer.toString());
+				hint(s+pointer.toString());
+			}
+		}
+		
+		else if(pointer.left!=null) {
+			if(d.diccionario.containsKey((s+pointer.left.toString()).hashCode())) {
+				pointer = pointer.left;
+				cover = new Point(pointer.getDato().getX(), pointer.getDato().getY());
+				this.repaint();
+				System.out.println(s+pointer.toString());
+				hint(s+pointer.toString());
+			}
+		}
+		
+		else if(pointer.up!=null) {
+			if(d.diccionario.containsKey((s+pointer.up.toString()).hashCode())) {
+				pointer = pointer.up;
+				cover = new Point(pointer.getDato().getX(), pointer.getDato().getY());
+				this.repaint();
+				System.out.println(s+pointer.toString());
+				hint(s+pointer.toString());
+			}
+		}
+		
+		else if(pointer.upright!=null) {
+			if(d.diccionario.containsKey((s+pointer.upright.toString()).hashCode())) {
+				pointer = pointer.upright;
+				cover = new Point(pointer.getDato().getX(), pointer.getDato().getY());
+				this.repaint();
+				System.out.println(s+pointer.toString());
+				hint(s+pointer.toString());
+			}
+		}
+		
+		else if(pointer.upleft!=null) {
+			if(d.diccionario.containsKey((s+pointer.upleft.toString()).hashCode())) {
+				pointer = pointer.upleft;
+				cover = new Point(pointer.getDato().getX(), pointer.getDato().getY());
+				this.repaint();
+				System.out.println(s+pointer.toString());
+				hint(s+pointer.toString());
+			}
+		}
+		else {
+			
+		}
+		System.out.println(s+pointer.right.toString());
+		pointer = pointer.right;
+		hint(s+pointer.toString());
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(this.timer.isRunning()) {
