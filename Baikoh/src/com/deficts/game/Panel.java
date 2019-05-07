@@ -95,6 +95,9 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 			this.btnSubmit.setVisible(false);
 			this.tfNombre.setVisible(false);
 			this.btnLeaderboard.setVisible(true);
+			g.setFont(new Font("Helvetica", Font.BOLD, 150));
+			g.setColor(Color.WHITE);
+			g.drawString("Baikoh!", 20, 170);
 			
 		}
 		else if(this.state==1) {
@@ -106,6 +109,7 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 			this.tfNombre.setVisible(false);
 			this.btnLeaderboard.setVisible(false);
 			
+			
 			pintaCuadricula(g);
 			llenadoInicial(g);
 			pintaTablero(g);
@@ -115,8 +119,16 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 			pintaFlecha(g, new Point(cover.x, cover.y));
 			g.setColor(Color.GREEN);
 			g.drawString("Score: "+puntaje, 400, 70);
-			g.setColor(Color.cyan);
 			int time=(this.countdown-(int)this.elapsedTime+13)/1000;
+			if(time>80){
+				g.setColor(Color.cyan);
+			}
+			if(time<81 && time>30) {
+				g.setColor(Color.yellow);
+			}
+			if(time<31) {
+				g.setColor(Color.red);
+			}
 			g.drawString("Time left: "+time, 170, 70);
 			this.repaint();
 			
@@ -447,43 +459,110 @@ public class Panel extends JPanel implements KeyListener,MouseListener, MouseMot
 	}
 	
 	private void pintaFlecha(Graphics g, Point p) {
+		int[] xpoints=new int[3];
+	    int[] ypoints=new int[3];
+	    int npoints=3;
 		switch(direction) {
 			case 0:
+				xpoints[0] = p.x+10;
+				xpoints[1] = p.x+20;
+				xpoints[2] = p.x+30;
+			    ypoints[0] = p.y;
+			    ypoints[1] = p.y-10;
+			    ypoints[2] = p.y;
+
+			    g.fillPolygon(xpoints, ypoints, npoints);
 				g.drawLine(p.x+10, p.y, p.x+20, p.y-10); //izquierda
 				g.drawLine(p.x+10, p.y, p.x+30, p.y); //abajo
 				g.drawLine(p.x+30, p.y, p.x+20, p.y-10); //derecha
 				break;
 			case 1:
+				xpoints[0] = p.x+40;
+				xpoints[1] = p.x+40;
+				xpoints[2] = p.x+30;
+			    ypoints[0] = p.y;
+			    ypoints[1] = p.y+10;
+			    ypoints[2] = p.y;
+
+			    g.fillPolygon(xpoints, ypoints, npoints);
 				g.drawLine(p.x+40, p.y, p.x+40, p.y+10); //derecha
 				g.drawLine(p.x+30, p.y, p.x+40, p.y); //arriba
 				g.drawLine(p.x+30, p.y, p.x+40, p.y+10); //abajo
 				break;
 			case 2:
+				xpoints[0] = p.x+40;
+				xpoints[1] = p.x+40;
+				xpoints[2] = p.x+50;
+			    ypoints[0] = p.y+10;
+			    ypoints[1] = p.y+30;
+			    ypoints[2] = p.y+20;
+
+			    g.fillPolygon(xpoints, ypoints, npoints);
 				g.drawLine(p.x+40, p.y+10, p.x+40, p.y+30); //izquierda
 				g.drawLine(p.x+40, p.y+10, p.x+50, p.y+20); //arriba
 				g.drawLine(p.x+50, p.y+20, p.x+40, p.y+30); //abajo
 				break;
 			case 3:
+				xpoints[0] = p.x+40;
+				xpoints[1] = p.x+40;
+				xpoints[2] = p.x+30;
+			    ypoints[0] = p.y+30;
+			    ypoints[1] = p.y+40;
+			    ypoints[2] = p.y+40;
+
+			    g.fillPolygon(xpoints, ypoints, npoints);
 				g.drawLine(p.x+40, p.y+30, p.x+40, p.y+40); //derecha
 				g.drawLine(p.x+40, p.y+30, p.x+30, p.y+40); //izquierda
 				g.drawLine(p.x+40, p.y+40, p.x+30, p.y+40); //abajo
 				break;
 			case 4:
+				xpoints[0] = p.x+10;
+				xpoints[1] = p.x+20;
+				xpoints[2] = p.x+30;
+			    ypoints[0] = p.y+40;
+			    ypoints[1] = p.y+50;
+			    ypoints[2] = p.y+40;
+
+			    g.fillPolygon(xpoints, ypoints, npoints);
 				g.drawLine(p.x+10, p.y+40, p.x+20, p.y+50); //derecha
 				g.drawLine(p.x+10, p.y+40, p.x+30, p.y+40); //arriba
 				g.drawLine(p.x+30, p.y+40, p.x+20, p.y+50); //izquierda
 				break;
 			case 5:
+				xpoints[0] = p.x+10;
+				xpoints[1] = p.x;
+				xpoints[2] = p.x;
+			    ypoints[0] = p.y+40;
+			    ypoints[1] = p.y+40;
+			    ypoints[2] = p.y+30;
+
+			    g.fillPolygon(xpoints, ypoints, npoints);
 				g.drawLine(p.x+10, p.y+40, p.x, p.y+40); //abajo
 				g.drawLine(p.x, p.y+40, p.x, p.y+30); //izquierda
 				g.drawLine(p.x, p.y+30, p.x+10, p.y+40); //arriba
 				break;
 			case 6:
+				xpoints[0] = p.x;
+				xpoints[1] = p.x;
+				xpoints[2] = p.x-10;
+			    ypoints[0] = p.y+10;
+			    ypoints[1] = p.y+30;
+			    ypoints[2] = p.y+20;
+
+			    g.fillPolygon(xpoints, ypoints, npoints);
 				g.drawLine(p.x, p.y+10, p.x, p.y+30); //derecha
 				g.drawLine(p.x, p.y+30, p.x-10, p.y+20); //abajo
 				g.drawLine(p.x, p.y+10, p.x-10, p.y+20); //arriba
 				break;
 			case 7:
+				xpoints[0] = p.x;
+				xpoints[1] = p.x+10;
+				xpoints[2] = p.x;
+			    ypoints[0] = p.y;
+			    ypoints[1] = p.y;
+			    ypoints[2] = p.y+10;
+
+			    g.fillPolygon(xpoints, ypoints, npoints);
 				g.drawLine(p.x, p.y, p.x+10, p.y); //arriba
 				g.drawLine(p.x, p.y, p.x, p.y+10); //izquierda
 				g.drawLine(p.x, p.y+10, p.x+10, p.y); //arriba
